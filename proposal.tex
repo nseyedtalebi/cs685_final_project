@@ -1,0 +1,55 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{CS685 Final Project Proposal}
+\author{Seif, Joe, and Nima}
+\date{February 2019}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem Statement}
+Epidemics have had a tremendous impact on humans throughout our history. Much work has been done to study them so that we might reduce their effects or mitigate them entirely, but the application of this knowledge is far from simple. Any proposed intervention must rely on human behavior at some point, so we claim that people's conscious actions can affect the dynamics of an epidemic.
+
+Humans are social animals. Humans were forming social networks long before people thought of them that way, and these networks have shaped all of human history. People are influenced by their social network in many ways. Through them we share values, beliefs, and ideas, all of which affect perceptions and behavior. Thus, the spread of ideas can affect the spread of a disease. We aim to model the effect of information diffusion in social networks on the spread of diseases in human populations.
+
+\section{Experimental Data}
+We will test the behavior of our model on synthetic networks first. The paper that inspired this topic used both ER and BA synthetic networks to examine the effect of topology on outcomes, so we will do the same. We will search for the largest real-world dataset our methods can handle using preliminary results from synthetic networks.
+
+\section{Research Plan}
+Work will proceed in several distinct phases:
+\begin{enumerate}
+    \item Background research and model building: Learn about the current state of the art and write a complete mathematical description of our proposed model. We should make some predictions about how the model will behave before simulations begin.
+    \item Simulations using synthetic networks: Simulate our model on synthetic networks. Networks of different sizes and parameters should be used to gain the best possible understanding of the model's behavior. Care should be taken to document simulation procedures so they can be explained in detail in the final report.
+    \item Analysis: Analyze preliminary results to assess model quality. Mathematical analysis of the model should be completed during this stage: do the initial results match the predictions? We will also use the experience we gain here to determine how large of a network we can run simulations on.
+    \item Simulations using real networks: Repeat the simulations done before on the real networks.
+    \item Finish report: Finish writing the final report. Most of the writing should already be completed at this point.
+\end{enumerate}
+
+\section{Overview of Proposed Model}
+We will use a model based on the one described in \cite{Tambuscio2015FactcheckingEO} for the information diffusion process. We will modify their model by assigning a gullability constant $\alpha$ , fact-checking probability $p_{verify}$, and forgetting probability $p_{forget}$ to \textit{each person} instead of using the same value for all people.
+
+For each time step in the information diffusion process, we will also simulate the spread of a disease using a stochastic model . Parameters for this model will be set based on existing results, so we will need to use a disease that has already been studied in this way. We will likely use measles as our model disease because it is well-studied, preventable, and spreads very quickly. If time permits, modeling a less virulent disease for comparison may be interesting. The diseases need not be preventable to apply our method but since we are interested in the impact of human behavior, we should choose diseases that have a clear and measurable response to medical interventions or changes in behavior.
+
+The dynamics of such a system will be complex, so we should try running the disease and information diffusion models separately, concurrently, and staggered. By "staggered," we mean that we will start simulating one process and begin simulating the other later. For example, we could start simulating the spread of information regarding vaccinations and then start the disease spread simulation later or vice versa. 
+
+\section{Evaluation Plan}
+We will evaluate our experimental results by comparing each part of our system to the results we derived it from. We will compare our information diffusion model to the one in \cite{Tambuscio2015FactcheckingEO} and our disease model to whichever one we select from the literature. We are not aware of any combined models like the one we will describe, but if we discover them, we should include comparisons to those as well where appropriate. The "gold standard" for verification would be to use data about a real information diffusion process that affected a real epidemic, but making a sufficiently rigorous comparison may not be possible with the available data and time. This limitation would be discussed as part of the final report and could be used in a "future work" section.
+
+\section{Deliverables}
+By the end of the semester, we will provide at minimum:
+\begin{itemize}
+    \item A mathematical model as described above
+    \item Simulation results for this model on Erdos-Renyi and Barabasi-Albert synthetic networks
+    \item Analysis of those results and of the model
+    \item A written paper documenting our work in detail
+\end{itemize}
+If time permits, we would also include:
+\begin{itemize}
+    \item Simulation results for real networks
+    \item Comparisons with real cases
+\end{itemize}
+
+
+\end{document}
