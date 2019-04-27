@@ -28,7 +28,7 @@ def run_simulation(input_graph,iterations):
 	g.do_simulation(iterations)
 	return g.values_at_each
 
-num_runs = 100
+num_runs = 1
 ER_Nodes=10000
 ER_Edges=40000
 #Single instance for ER graph.
