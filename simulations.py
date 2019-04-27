@@ -41,19 +41,39 @@ def run_er_simulation(num_nodes,num_edges,alpha,zeta,*args,**kwargs):
 	g.do_simulation(kwargs.get('iterations',1000))
 	return g.values_at_each
 
-def estimate_r0_er(tolerance=0.01):
-	change = 99999
-	r0 = 0
-	runs = []
-	while abs(change) > tolerance:
-		#get number of exposed people from first (and only) timestep of sim
-		runs.append(run_er_simulation(1000,4000,alpha,zeta,iterations=1)[0][1])
-		r0_new = sum(runs)/len(runs)
-		change = r0_new - r0
-		r0 = r0_new
-	return r0
+def estimate_r0_er(num_runs,nodes,edges,alpha,zeta):
+	runs = [run_er_simulation(nodes,edges,alpha,zeta,iterations=1)[0][1] for run in range(0,num_runs)]
+	return float(sum(runs))/float(len(runs))
 
-print estimate_r0_er(0.001)
+def run_ws_simulation(num_nodes,num_edges,alpha,zeta,*args,**kwargs):
+	gen=snap.TRnd()
+	gen.PutSeed(6)
+	input_graph = snap.GenSmallWorld(num_nodes,num_edges,0,gen)
+	g = seir.Graph(alpha, zeta, input_graph)
+	#Choose random infected.
+	g.states[random.sample(g.verts,1)[0]] = (0,1,0,0)
+	g.do_simulation(kwargs.get('iterations',1000))
+	return g.values_at_each
+
+def estimate_r0_ws(num_runs,nodes,edges,alpha,zeta):
+	runs = [run_ws_simulation(nodes,edges,alpha,zeta,iterations=1)[0][1] for run in range(0,num_runs)]
+	return float(sum(runs))/float(len(runs))
+
+def run_ba_simulation(num_nodes,num_edges,alpha,zeta,*args,**kwargs):
+	gen=snap.TRnd()
+	gen.PutSeed(6)
+	input_graph = snap.GenPrefAttach(num_nodes,num_edges,gen)
+	g = seir.Graph(alpha, zeta, input_graph)
+	#Choose random infected.
+	g.states[random.sample(g.verts,1)[0]] = (0,1,0,0)
+	g.do_simulation(kwargs.get('iterations',1000))
+	return g.values_at_each
+
+def estimate_r0_ba(num_runs,nodes,edges,alpha,zeta):
+	runs = [run_ba_simulation(nodes,edges,alpha,zeta,iterations=1)[0][1] for run in range(0,num_runs)]
+	return float(sum(runs))/float(len(runs))
+
+print estimate_r0_ba(100,1000,8,alpha,zeta)
 
 
 
