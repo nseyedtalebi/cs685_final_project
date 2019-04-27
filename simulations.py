@@ -29,15 +29,15 @@ def run_simulation(input_graph,iterations):
 	return g.values_at_each
 
 num_runs = 1
-ER_Nodes=10000
-ER_Edges=40000
+ER_Nodes=1000
+ER_Edges=4000
 #Single instance for ER graph.
 gen.PutSeed(current_seed)
 er_runs = []
 for run in range(0,num_runs):
 	g = snap.GenRndGnm(snap.PUNGraph,ER_Nodes,ER_Edges,False,gen)
 	er_runs.append(run_simulation(g,1000))
-print er_runs
+#print er_runs
 '''
 WS_Nodes=50000
 WS_Edges=1000

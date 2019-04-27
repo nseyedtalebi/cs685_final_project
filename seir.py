@@ -61,7 +61,23 @@ class Graph:
 				return True
 		return False
 	
-	def do_simulation(self,amount_of_rounds, pool_size = 8):
+	def do_simulation(self,amount_of_rounds):
+		rounds=0
+		#reset discrete graph generation for random results.
+		random.seed(None)
+		
+		amounts={0:0,1:0,2:0,3:0,4:0}
+		while rounds<amount_of_rounds:
+			#The amount of nodes in each state. From Left to right for indicies, R:0,I:1,E:2,S:3.
+			self.states, amounts = self._update_states(self.verts)
+			self.values_at_each[rounds]=(amounts[3],amounts[2],amounts[1],amounts[0])
+			rounds+=1
+			print rounds,"\tS:",amounts[3],"  E:",amounts[2],"  I:",amounts[1],"  R:",amounts[0]
+			#Break if every node is recovered/dead or stranded.
+			if amounts[0]+amounts[3]==len(self.verts):
+				break
+
+	def do_simulation_threaded(self,amount_of_rounds, pool_size = 8):
 		rounds=0
 		#reset discrete graph generation for random results.
 		random.seed(None)
