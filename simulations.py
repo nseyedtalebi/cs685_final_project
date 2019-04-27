@@ -1,7 +1,8 @@
 import sys
 import time
 import random
- 
+from multiprocessing.dummy import Pool as ThreadPool
+
 import snap
 import seir
 
@@ -21,23 +22,23 @@ current_seed=6
 
 gen=snap.TRnd()
 
-def run_simulation(input_graph,iterations):
+def run_er_simulation(input_graph):
+	ER_Nodes=10000
+	ER_Edges=40000
+	input_graph = snap.GenRndGnm(snap.PUNGraph,ER_Nodes,ER_Edges,False,gen)
 	g = seir.Graph(alpha, zeta, input_graph)
 	#Choose random infected.
 	g.states[random.sample(g.verts,1)[0]] = (0,1,0,0)
-	g.do_simulation(iterations)
+	g.do_simulation(1000)
 	return g.values_at_each
 
-num_runs = 1
-ER_Nodes=1000
-ER_Edges=4000
-#Single instance for ER graph.
+num_runs = 1000
 gen.PutSeed(current_seed)
-er_runs = []
-for run in range(0,num_runs):
-	g = snap.GenRndGnm(snap.PUNGraph,ER_Nodes,ER_Edges,False,gen)
-	er_runs.append(run_simulation(g,1000))
-#print er_runs
+pool = ThreadPool(8)
+er_runs = pool.map(run_er_simulation,range(0,num_runs))
+pool.close()
+pool.join()
+print er_runs
 '''
 WS_Nodes=50000
 WS_Edges=1000

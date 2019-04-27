@@ -72,7 +72,7 @@ class Graph:
 			self.states, amounts = self._update_states(self.verts)
 			self.values_at_each[rounds]=(amounts[3],amounts[2],amounts[1],amounts[0])
 			rounds+=1
-			print rounds,"\tS:",amounts[3],"  E:",amounts[2],"  I:",amounts[1],"  R:",amounts[0]
+			#print rounds,"\tS:",amounts[3],"  E:",amounts[2],"  I:",amounts[1],"  R:",amounts[0]
 			#Break if every node is recovered/dead or stranded.
 			if amounts[0]+amounts[3]==len(self.verts):
 				break
@@ -96,7 +96,7 @@ class Graph:
 			amounts = reduce(sum_dicts,partial_amounts,{0:0,1:0,2:0,3:0,4:0})
 			self.values_at_each[rounds]=(amounts[3],amounts[2],amounts[1],amounts[0])
 			rounds+=1
-			print rounds,"\tS:",amounts[3],"  E:",amounts[2],"  I:",amounts[1],"  R:",amounts[0]
+			#print rounds,"\tS:",amounts[3],"  E:",amounts[2],"  I:",amounts[1],"  R:",amounts[0]
 			#Break if every node is recovered/dead or stranded.
 			if amounts[0]+amounts[3]==len(self.verts):
 				break
