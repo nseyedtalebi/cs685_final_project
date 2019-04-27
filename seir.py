@@ -86,8 +86,8 @@ class Graph:
 		while rounds<amount_of_rounds:
 			#The amount of nodes in each state. From Left to right for indicies, R:0,I:1,E:2,S:3.
 			pool = ThreadPool(pool_size)
-			vert_chunks = chunks(list(self.verts),int(floor(len(self.verts)/pool_size)))
-			res = pool.map(self._update_states,vert_chunks)
+			#vert_chunks = chunks(list(self.verts),int(floor(len(self.verts)/pool_size)))
+			res = pool.map(self._update_states,self.verts,int(floor(len(self.verts)/pool_size)))
 			pool.close()
 			pool.join()
 			next_states = [r[0] for r in res]

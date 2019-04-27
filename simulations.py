@@ -2,6 +2,8 @@ import sys
 import time
 import random
 from multiprocessing.dummy import Pool as ThreadPool
+from functools import partial
+import timeit
 
 import snap
 import seir
@@ -14,31 +16,53 @@ if len(sys.argv)!=3:
 alpha=float(sys.argv[1])
 zeta=float(sys.argv[2])
 	
+cores = 4
 current_seed=6
 #To seed the graph of the same number, push the number to gen then generate the graph.	
 #GenRndGnm for ER graph. GenRndGnm(snap.PNGraph,node_nums,edge_nums,false,TRnd for random number generation).
 #GenSmallWorld for WS graph. GenSmallWorld(node_nums,avgerage_degree,rewire probability,TRnd for random number generation)
 #GenPrefAttach for BA graph. GenPrefAttach(node_nums, NodeOutDegree,TRnd for random number generation)
 
-gen=snap.TRnd()
 
-def run_er_simulation(input_graph):
-	ER_Nodes=10000
-	ER_Edges=40000
-	input_graph = snap.GenRndGnm(snap.PUNGraph,ER_Nodes,ER_Edges,False,gen)
+def run_simulations_threaded(func,cores,num_runs):
+	pool = ThreadPool(cores)
+	runs = pool.map(er_sim,range(0,num_runs))
+	pool.close()
+	pool.join()
+	return runs
+
+def run_er_simulation(num_nodes,num_edges,alpha,zeta,*args,**kwargs):
+	gen=snap.TRnd()
+	gen.PutSeed(6)
+	input_graph = snap.GenRndGnm(snap.PUNGraph,num_nodes,num_edges,False,gen)
 	g = seir.Graph(alpha, zeta, input_graph)
 	#Choose random infected.
 	g.states[random.sample(g.verts,1)[0]] = (0,1,0,0)
-	g.do_simulation(1000)
+	g.do_simulation(kwargs.get('iterations',1000))
 	return g.values_at_each
 
-num_runs = 1000
-gen.PutSeed(current_seed)
-pool = ThreadPool(8)
-er_runs = pool.map(run_er_simulation,range(0,num_runs))
-pool.close()
-pool.join()
-print er_runs
+def estimate_r0_er(tolerance=0.01):
+	change = 99999
+	r0 = 0
+	runs = []
+	while abs(change) > tolerance:
+		#get number of exposed people from first (and only) timestep of sim
+		runs.append(run_er_simulation(1000,4000,alpha,zeta,iterations=1)[0][1])
+		r0_new = sum(runs)/len(runs)
+		change = r0_new - r0
+		r0 = r0_new
+	return r0
+
+print estimate_r0_er(0.001)
+
+
+
+#er_sim = partial(run_er_simulation,1000,4000,alpha,zeta,iterations=1000)
+#er_runs = run_simulations_threaded(er_sim,4,10)
+#will send an extra argument to er_sim that I ignore
+#Feels unpythonic but does it work?
+
+#print er_runs
 '''
 WS_Nodes=50000
 WS_Edges=1000
