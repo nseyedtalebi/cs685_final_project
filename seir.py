@@ -74,6 +74,8 @@ class Graph:
 			rounds+=1
 			#print rounds,"\tS:",amounts[3],"  E:",amounts[2],"  I:",amounts[1],"  R:",amounts[0]
 			#Break if every node is recovered/dead or stranded.
+			if rounds > 70:
+				print "ay"
 			if amounts[0]+amounts[3]==len(self.verts):
 				break
 
@@ -114,7 +116,8 @@ class Graph:
 					amounts[2]+=1
 					self.current_period[vert]=0
 					#Generate the incubation time threshold X sub e.
-					self.current_threshold[vert]=random.gauss(11,2)
+					e_days = random.gauss(11,2)
+					self.current_threshold[vert]= e_days
 				#Else remain in S.
 				else:
 					next_states[vert]=(0,0,0,1)
@@ -127,7 +130,8 @@ class Graph:
 					self.current_period[vert]=0
 					next_states[vert]=(0,1,0,0)
 					#Generate the infection time threshold X sub i.
-					self.current_threshold[vert]=random.gauss(6,1)
+					i_days  = random.gauss(6,1)
+					self.current_threshold[vert]= i_days
 					amounts[1]+=1
 					continue
 				else:
@@ -141,6 +145,7 @@ class Graph:
 				if randChance<=self.zeta or \
 				(self.current_period[vert] >= self.current_threshold[vert] and \
 				self.current_threshold[vert] > 0):
+					self.current_period[vert]=0
 					next_states[vert]=(1,0,0,0)
 					amounts[0]+=1
 					continue

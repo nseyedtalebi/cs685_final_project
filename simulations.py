@@ -1,79 +1,85 @@
 import sys
 import time
 import random
+import pickle
 from multiprocessing.dummy import Pool as ThreadPool
 from functools import partial
-import timeit
 
 import snap
 import seir
 
-if len(sys.argv)!=3:
-	print "Improper usage, call as",sys.argv[0]," alpha_value zeta_value\n"
-	sys.exit(1)
-
-
-alpha=float(sys.argv[1])
-zeta=float(sys.argv[2])
-	
+alpha=0.9
+zeta=0.02
 cores = 4
 current_seed=6
-#To seed the graph of the same number, push the number to gen then generate the graph.	
-#GenRndGnm for ER graph. GenRndGnm(snap.PNGraph,node_nums,edge_nums,false,TRnd for random number generation).
-#GenSmallWorld for WS graph. GenSmallWorld(node_nums,avgerage_degree,rewire probability,TRnd for random number generation)
-#GenPrefAttach for BA graph. GenPrefAttach(node_nums, NodeOutDegree,TRnd for random number generation)
+gen=snap.TRnd()
+gen.PutSeed(6)
 
+def amounts_add(x,y):
+	return tuple([x[i]+y[i] for i in range(0,4)])
 
-def run_simulations_threaded(func,cores,num_runs):
-	pool = ThreadPool(cores)
-	runs = pool.map(er_sim,range(0,num_runs))
-	pool.close()
-	pool.join()
-	return runs
+def run_simulation(input_graph,alpha,zeta,*args,**kwargs):
+	g = seir.Graph(alpha, zeta, input_graph)
+	#Choose random infected.
+	infected = random.sample(g.verts,1)[0]
+	g.states[infected] = (0,1,0,0)
+	g.current_threshold[infected] = random.gauss(6,1)
+	g.current_period[infected] = 0
+	g.do_simulation(kwargs.get('iterations',1000))
+	return g.values_at_each
 
 def run_er_simulation(num_nodes,num_edges,alpha,zeta,*args,**kwargs):
-	gen=snap.TRnd()
-	gen.PutSeed(6)
-	input_graph = snap.GenRndGnm(snap.PUNGraph,num_nodes,num_edges,False,gen)
-	g = seir.Graph(alpha, zeta, input_graph)
-	#Choose random infected.
-	g.states[random.sample(g.verts,1)[0]] = (0,1,0,0)
-	g.do_simulation(kwargs.get('iterations',1000))
-	return g.values_at_each
-
-def estimate_r0_er(num_runs,nodes,edges,alpha,zeta):
-	runs = [run_er_simulation(nodes,edges,alpha,zeta,iterations=1)[0][1] for run in range(0,num_runs)]
-	return float(sum(runs))/float(len(runs))
+	r = snap.GenRndGnm(snap.PUNGraph,num_nodes,num_edges,False,gen)
+	return run_simulation(r,alpha,zeta,*args,**kwargs)
 
 def run_ws_simulation(num_nodes,num_edges,alpha,zeta,*args,**kwargs):
-	gen=snap.TRnd()
-	gen.PutSeed(6)
-	input_graph = snap.GenSmallWorld(num_nodes,num_edges,0,gen)
-	g = seir.Graph(alpha, zeta, input_graph)
-	#Choose random infected.
-	g.states[random.sample(g.verts,1)[0]] = (0,1,0,0)
-	g.do_simulation(kwargs.get('iterations',1000))
-	return g.values_at_each
-
-def estimate_r0_ws(num_runs,nodes,edges,alpha,zeta):
-	runs = [run_ws_simulation(nodes,edges,alpha,zeta,iterations=1)[0][1] for run in range(0,num_runs)]
-	return float(sum(runs))/float(len(runs))
+	r = snap.GenSmallWorld(num_nodes,num_edges,0,gen)
+	return run_simulation(r,alpha,zeta,*args,**kwargs)
 
 def run_ba_simulation(num_nodes,num_edges,alpha,zeta,*args,**kwargs):
-	gen=snap.TRnd()
-	gen.PutSeed(6)
-	input_graph = snap.GenPrefAttach(num_nodes,num_edges,gen)
-	g = seir.Graph(alpha, zeta, input_graph)
-	#Choose random infected.
-	g.states[random.sample(g.verts,1)[0]] = (0,1,0,0)
-	g.do_simulation(kwargs.get('iterations',1000))
-	return g.values_at_each
+	r = snap.GenPrefAttach(num_nodes,num_edges,gen)
+	return run_simulation(r,alpha,zeta,*args,**kwargs)
 
-def estimate_r0_ba(num_runs,nodes,edges,alpha,zeta):
-	runs = [run_ba_simulation(nodes,edges,alpha,zeta,iterations=1)[0][1] for run in range(0,num_runs)]
+def estimate_r0(num_runs,sim_func,*args,**kwargs):
+	runs = [sim_func(*args,**kwargs)[0][1] for run in range(0,num_runs)]
 	return float(sum(runs))/float(len(runs))
 
-print estimate_r0_ba(100,1000,8,alpha,zeta)
+def get_ensemble(num_runs,sim_func,*args,**kwargs):
+	runs = [sim_func(*args,**kwargs) for run in range(0,num_runs)]
+	totals = {}
+	for run in runs:
+		for timestep,amounts in run.items():
+			if timestep in totals:
+				totals[timestep].append(amounts)
+			else:
+				totals[timestep] = [amounts]
+	avgd = {}
+	for timestep in totals:
+		totals_seir = reduce(amounts_add,totals[timestep],(0,0,0,0))
+		num_pts = len(totals[timestep])
+		avgd[timestep] = tuple(i/float(num_pts) for i in totals_seir)
+	return avgd
+
+def write_r0_estimates():
+	num_runs = 50
+	r0_er = {i*500:estimate_r0(num_runs,run_er_simulation,500,500*i,alpha,zeta,iterations=1) for i in range(1,20)}
+	r0_ba = {i:estimate_r0(num_runs,run_ws_simulation,500,i,alpha,zeta,iterations=1) for i in range(1,20)}
+	r0_ws = {i:estimate_r0(num_runs,run_er_simulation,500,i,alpha,zeta,iterations=1) for i in range(1,20)}
+	with open('r0_er.pkl','w') as er:
+		pickle.dump(r0_er,er)
+	with open('r0_ba.pkl','w') as ba:
+		pickle.dump(r0_ba,ba)
+	with open('r0_ws.pkl','w') as ws:
+		pickle.dump(r0_ws,ws)
+
+num_nodes = 395
+'''With 355 infected in the case study and a 90% secondary attack rate,
+there were about 355/0.9 sufficent contacts'''
+zeta_dublin = 3/395.0
+write_r0_estimates()
+#er_sims = get_ensemble(100,run_er_simulation,num_nodes,num_nodes*3,alpha,zeta_dublin)
+#print er_sims
+
 
 
 
