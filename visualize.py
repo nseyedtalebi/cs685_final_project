@@ -15,10 +15,6 @@ Edges=0
 current_line=0
 with open(sys.argv[1],'r') as fp:
 	line=fp.readline()
-	splt=line.split(',')
-	Nodes=int(splt[0])
-	Edges=int(splt[1])
-	line=fp.readline()
 	while line:
 		items=line.split(',')
 		states[0].append(int(items[0]))
