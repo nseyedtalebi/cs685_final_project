@@ -4,6 +4,7 @@ import time
 import itertools
 from multiprocessing.dummy import Pool as ThreadPool
 from math import floor
+from collections import defaultdict
 
 import snap
 
@@ -25,6 +26,11 @@ def sum_dicts(x,y):
 		else:
 			y[key]
 	return y
+
+def dict_results_to_lists(r0_values):
+	keys = [key for key in sorted(r0_values.keys())]
+	values = [r0_values[key] for key in keys]
+	return keys,values
 #zeta is infectious mortality rate.
 #alpha is immunity loss rate.
 class Graph:
@@ -32,6 +38,7 @@ class Graph:
 		self.verts=set()
 		self.states={}
 		self.edges={}
+		self.neighbors=defaultdict(set)
 		self.edgeNums=0
 		self.alpha=alpha
 		self.zeta=zeta
@@ -40,8 +47,9 @@ class Graph:
 		if snap_graph:
 			for it in snap_graph.Edges():
 				self.AddEdge(it.GetSrcNId(),it.GetDstNId())
-		self.current_period={i:-1 for i in self.verts}
-		self.current_threshold={i:-1 for i in self.verts}
+		#self.current_period={i:-1 for i in self.verts}
+		self.current_period=defaultdict(lambda x:-1)
+		self.current_threshold=defaultdict(lambda x:-1)
 
 	def AddNode(self,index):
 		if not index in self.verts:
@@ -74,8 +82,6 @@ class Graph:
 			rounds+=1
 			#print rounds,"\tS:",amounts[3],"  E:",amounts[2],"  I:",amounts[1],"  R:",amounts[0]
 			#Break if every node is recovered/dead or stranded.
-			if rounds > 70:
-				print "ay"
 			if amounts[0]+amounts[3]==len(self.verts):
 				break
 

@@ -17,10 +17,10 @@ with open(sys.argv[1],'r') as fp:
 	line=fp.readline()
 	while line:
 		items=line.split(',')
-		states[0].append(int(items[0]))
-		states[1].append(int(items[1]))
-		states[2].append(int(items[2]))
-		states[3].append(int(items[3]))
+		states[0].append(float(items[0]))
+		states[1].append(float(items[1]))
+		states[2].append(float(items[2]))
+		states[3].append(float(items[3]))
 		size.append(current_line)
 		current_line+=1
 		line=fp.readline()
@@ -34,15 +34,6 @@ for i in range(0,len(states)):
 	plt.plot(size,states[i],markerfacecolor=colors[index],markeredgecolor='k',markersize=5,label=labels[index])
 	index+=1
 
-header=''
-if sys.argv[1][0:2]=='ER':
-	header='ER Graph (Nodes: '+str(Nodes)+', Edges:'+str(Edges)+')'
-elif sys.argv[1][0:2]=='WS':
-	header='WS Graph (Nodes: '+str(Nodes)+', Edges:'+str(Edges)+')'
-elif sys.argv[1][0:2]=='BA':
-	header='BA Graph (Nodes: '+str(Nodes)+', Edges:'+str(Edges)+')'
-
-plt.title(header)
 plt.ylabel('number in state')
 plt.xlabel('time')
 plt.legend()

@@ -3,10 +3,13 @@ import time
 import random
 import pickle
 from datetime import datetime
+import cProfile
+from collections import defaultdict
 
 import snap
 import seir
-
+import matplotlib.pyplot as plt
+from sklearn.metrics import mean_squared_error
 alpha=0.9
 zeta=0.02
 cores = 4
@@ -60,7 +63,7 @@ def get_ensemble(num_runs,sim_func,*args,**kwargs):
 	return avgd
 
 def write_r0_estimates():
-	num_runs = 1000
+	num_runs = 100
 	r0_er = {i*500:estimate_r0(num_runs,run_er_simulation,500,500*i,alpha,zeta,iterations=1) for i in range(1,20)}
 	r0_ba = {i:estimate_r0(num_runs,run_ba_simulation,500,i,alpha,zeta,iterations=1) for i in range(1,20)}
 	r0_ws_deg = {i:estimate_r0(num_runs,run_ws_simulation,500,i,0,alpha,zeta,iterations=1) for i in range(1,20)}
@@ -77,17 +80,84 @@ def write_r0_estimates():
 
 def write_sim_results(results,filename='sim_output_'+datetime.strftime(datetime.now(),'%Y%m%d_%H%M%S')):
 	with open(filename,'w') as fp:
-		for i in range(0,len(results)):
+		for i in results:
 			line=str(results[i][0])+','+str(results[i][1])+','+str(results[i][2])+','+str(results[i][3])+'\n'
 			fp.write(line)
+
+def mse(gt_dict,ts_dict):
+	gt = []
+	ts = []
+	for key,value in gt_dict.items():
+		gt.append(value)
+		if key in ts_dict:
+			ts.append(ts_dict[key])
+		else:
+			ts.append(0.0)
+	return mean_squared_error(gt,ts)
+
+def get_infectious_by_week(sim_results):
+	i_by_week = defaultdict(lambda x:0.0)
+	for day in sim_results:
+		if day % 7 == 0 and day > 0:
+			i_by_week[(day/7)] = sim_results[day][2]
+	return i_by_week
 
 num_nodes = 395
 '''With 355 infected in the case study and a 90% secondary attack rate,
 there were about 355/0.9 sufficent contacts'''
 zeta_dublin = 3/395.0
-#write_r0_estimates()
-#er_sims = get_ensemble(100,run_er_simulation,num_nodes,num_nodes*3,alpha,zeta_dublin)
-#print er_sims
+#cProfile.run('er_sims = get_ensemble(100,run_er_simulation,num_nodes,num_nodes*3,alpha,zeta_dublin)')
+
+dublin = {}
+with open('dublin_2000_measles.txt','r') as inf:
+	inf.readline()#discard header
+	for line in inf:
+		r = line.strip().split('\t')
+		dublin[int(r[0])]=int(r[1])
+
+er_mse = {}
+'''for i in range(1,20):
+	er_sims = get_ensemble(10,run_er_simulation,num_nodes,num_nodes*i,alpha,zeta_dublin)
+	er_mse[i] = mse(dublin,get_infectious_by_week(er_sims))
+
+ba_mse = {}
+for i in range(1,20):
+	ba_sims = get_ensemble(10,run_ba_simulation,num_nodes,i,alpha,zeta_dublin)
+	ba_mse[i] = mse(dublin,get_infectious_by_week(ba_sims))
+'''
+
+ws_mse = {}
+for i in range(1,20):
+	ws_sims = get_ensemble(10,run_ws_simulation,num_nodes,i,0,alpha,zeta_dublin)
+	ws_mse[i] = mse(dublin,get_infectious_by_week(ws_sims))
+print ws_mse
+
+#TODO:
+'''
+-write out the mse data for visualization
+-see if we can get better values for mse for ws model (which seems to be the best so far)
+-add lines to mark acceptable r0 values for r0 estimates
+-once best params are found, run model with high number of sims to produce smooth output for figures
+-plot ground truth data from case study for figures
+'''
+
+#keys,vals = seir.dict_results_to_lists(dublin)
+#plt.plot(keys,vals)
+#plt.show()
+
+#er_sims = get_ensemble(10,run_er_simulation,num_nodes,num_nodes*3,alpha,zeta_dublin)
+#print mse(dublin,get_infectious_by_week(er_sims))
+
+#write_sim_results(i_by_week,'i_by_week.csv')
+#print i_by_week
+
+
+
+
+
+
+#write_sim_results(er_sims,filename='er_sim.csv')
+
 
 
 
