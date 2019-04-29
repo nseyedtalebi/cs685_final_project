@@ -102,43 +102,55 @@ def get_infectious_by_week(sim_results):
 			i_by_week[(day/7)] = sim_results[day][2]
 	return i_by_week
 
-num_nodes = 395
-'''With 355 infected in the case study and a 90% secondary attack rate,
-there were about 355/0.9 sufficent contacts'''
-zeta_dublin = 3/395.0
-#cProfile.run('er_sims = get_ensemble(100,run_er_simulation,num_nodes,num_nodes*3,alpha,zeta_dublin)')
+def load_dublin_case_data():
+	dublin = {}
+	with open('dublin_2000_measles.txt','r') as inf:
+		inf.readline()#discard header
+		for line in inf:
+			r = line.strip().split('\t')
+			dublin[int(r[0])]=int(r[1])
+	return dublin
 
-dublin = {}
-with open('dublin_2000_measles.txt','r') as inf:
-	inf.readline()#discard header
-	for line in inf:
-		r = line.strip().split('\t')
-		dublin[int(r[0])]=int(r[1])
+def get_mse_different_methods(write_output=True):
+	dublin = load_dublin_case_data()
+	mses = defaultdict(dict)
+	for i in range(1,20):
+		arg_lists = {'er':(ensemble_size,run_er_simulation,num_nodes,num_nodes*i,alpha,zeta_dublin),
+		'ba':(ensemble_size,run_ba_simulation,num_nodes,i,alpha,zeta_dublin),
+		'ws':(ensemble_size,run_ws_simulation,num_nodes,i,0,alpha,zeta_dublin)}	
+		for simtype,arg_list in arg_lists.items():
+			sims = get_ensemble(*arg_list)
+			mses[simtype][i] = mse(dublin,get_infectious_by_week(sims))
+	if write_output:
+		with open('mses.pkl','w') as outf:
+			pickle.dump(mses,outf)
+	return mses
 
-er_mse = {}
-'''for i in range(1,20):
-	er_sims = get_ensemble(10,run_er_simulation,num_nodes,num_nodes*i,alpha,zeta_dublin)
-	er_mse[i] = mse(dublin,get_infectious_by_week(er_sims))
-
-ba_mse = {}
-for i in range(1,20):
-	ba_sims = get_ensemble(10,run_ba_simulation,num_nodes,i,alpha,zeta_dublin)
-	ba_mse[i] = mse(dublin,get_infectious_by_week(ba_sims))
-'''
-
-ws_mse = {}
-for i in range(1,20):
-	ws_sims = get_ensemble(10,run_ws_simulation,num_nodes,i,0,alpha,zeta_dublin)
-	ws_mse[i] = mse(dublin,get_infectious_by_week(ws_sims))
-print ws_mse
+def run_best_model():
+	num_nodes = 395
+	ensemble_size = 10000
+	'''With 355 infected in the case study and a 90% secondary attack rate,
+	there were about 355/0.9 sufficent contacts'''
+	zeta_dublin = 3/395.0
+	dublin = load_dublin_case_data()
+	er_mse = {}
+	#22: 831.1648814579835
+	er_runs = get_ensemble(ensemble_size,run_er_simulation,num_nodes,int(num_nodes*(22/20)),alpha,zeta_dublin)
+	with open('best_fit.pkl','w') as f:
+		pickle.dump(er_runs,f)
 
 #TODO:
 '''
--write out the mse data for visualization
--see if we can get better values for mse for ws model (which seems to be the best so far)
 -add lines to mark acceptable r0 values for r0 estimates
 -once best params are found, run model with high number of sims to produce smooth output for figures
 -plot ground truth data from case study for figures
+dublin = load_dublin_case_data()
+er_mse = {}
+#22: 831.1648814579835
+for i in range (20,24):
+	er_runs = get_ensemble(ensemble_size,run_er_simulation,num_nodes,int(num_nodes/20)*i,alpha,zeta_dublin)
+	er_mse[i] = mse(dublin,get_infectious_by_week(er_runs))
+print er_mse
 '''
 
 #keys,vals = seir.dict_results_to_lists(dublin)
