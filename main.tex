@@ -24,23 +24,23 @@ Lexington, KY 40506--0633}
 }
 \maketitle
 
-
-
-\begin{abstract} %Joe
-In order to ascertain behavioral information related to a particular disease, it is integral that the propagation of said disease can be accurately modeled mathematically. Typically, this is accomplished by using a wealth of historical data related to any given disease. It is often the case that no one model can accurately demonstrate all behaviors of a disease realistically. As such, this paper will motivate and discuss a model specifically designed to simulate the propagation of Measles within an interaction based network. In doing so, the authors hope to provide and demonstrate a model that can be used to exclusively simulate measles behavior with a high degree of accuracy. Our model is a variation of [SEIR] model. We introduce the interaction graph based method in which nodes represent individuals and edges represent interactions.The transition from each state in the [SEIR] to another i.e E to I or I to R is determined by thresholds of each node.
+\begin{abstract} %Seif
+In order to ascertain behavioral information related to a particular disease, it is integral that the propagation of said disease can be accurately modeled mathematically. Typically, this is accomplished by using a wealth of historical data related to any given disease. It is often the case that no one model can accurately simulate all behaviors of a disease realistically. As such, this paper will motivate and discuss a model specifically designed to simulate the propagation of Measles within an interaction based network. In doing so, the authors hope to provide and demonstrate a model that can be used to exclusively simulate measles behavior with a high degree of accuracy. Our model is a variation of [SEIR] model. We introduce the interaction graph based method in which nodes represent individuals and edges represent interactions.The transition from each state in the [SEIR] to another i.e E to I or I to R is determined by thresholds of each node.
 The authors consider a number of terms such as secondary infection rate, infection and incubation periods and the basic reproduction number $R_0$.
 By comparing the results of our model to the historical results we found that it works well and can be considered as a reference.
 \end{abstract}
 
 \section{Introduction} %Joe
-The ability to accurately model the propagation of a disease within a given population is a key component in discerning relevant attributes related to the disease being propagated. The generalization of disease propagation simulation to reality hinges upon the ability to accurately model the phenomena within a simulated setting. Typically, this is accomplished by making use of historical data in order to ascertain unique aspects related to the simulated disease. Using these unique aspects, simulations can be run in order to model the general propagation trends of the disease. In most cases, the quickness of propagation and varying infection rates due to personal contact are important factors. Due to the importance of interaction in disease propagation, interaction modeling is given a reasonable amount of attention. Often, this personal contact factor is simulated in one of two ways. The first is a stochastic method, while the remaining is an interaction network based method. In the stochastic simulation method, spreading occurs in a manner that is purely probability based, so a large number of simulations are needed to produce accurate results. In an interaction graph based method, individuals are modeled as vertices and sufficient interactions as edges. In some cases, hybrid models are produced in which both interaction methods are taken into account and intertwined.\par
+The ability to accurately model the propagation of a disease within a given population is a key component in discerning relevant attributes related to the disease being propagated. The generalization of disease propagation simulation to reality hinges upon the ability to accurately model the phenomena within a simulated setting. Typically, this is accomplished by making use of historical data in order to ascertain unique aspects related to the simulated disease. Using these unique aspects, simulations can be run in order to model the general propagation trends of the disease. In most cases, the quickness of propagation and varying infection rates due to personal contact are important factors. Due to the importance of human interaction in disease propagation, interaction modeling is given a reasonable amount of attention. Often, this personal contact factor is simulated in one of two ways. The first is a stochastic method, while the remaining is an interaction network based method. In the stochastic simulation method, spreading occurs in a manner that is purely probability based, so a large number of simulations are needed to produce consistent results. In an interaction graph based method, individuals are modeled as vertices and sufficient interactions as edges. In some cases, hybrid models are produced in which both interaction methods are taken into account and intertwined.\par
 The modeling of epidemic spreading within a community is an extremely well researched area in modern scientific inquiry. With the advent of modern vaccinations, certain diseases have all but died out and become of little to no concern to the general populace. Due to the rise of the anti-vaccination sentiment however, many previously dying diseases are beginning to propagate among human populations once more. With this sentiment becoming increasingly prominent, it would be wise to examine historical data relating to these previous deadly diseases. In particular, diseases such as measles have been given a 'second-wind' so to speak. As a result, the need to accurately simulate these diseases in order to help mitigate the potential harm done by these infections has become increasingly important. As such, models used to simulate these diseases need to be developed in order to help minimize the potential risks.\par
 For modeling the spread of disease, it is common practice to use a pre-established model that applies to general propagation phenomena. For disease propagation, however, this method can be reasonably unreliable due to the variance in individual disease behaviors. As such, it is often appropriate to develop individual models that can be used to accurately model the behavior and propagation phenomena demonstrated by a single disease. With this in mind, this paper seeks to model the behavior and spreading of measles using a model specifically designed to simulate these aspects of the infection. This paper seeks to demonstrate the accuracy and viability of the proposed model by comparing the results to historical behavioral data related to measles. 
 
 \section{Related Work} %Joe
-In general, the modeling and simulation of diseases propagation is often implemented using an already existing model as a base. The most simplistic model that demonstrates propagation capabilities is the Susceptible-Infected (SI) model. In this model, individuals are either unexposed to an infection or infected. Due to the simplicity of the model, it is often a poor means by which to model the propagation of actual diseases. An improvement is made by the SIR model, which adds a recovered compartment that is used to account for individuals that have either survived or perished from the disease. Some models make a distinction between recovery and death, but most rarely differentiate between them. Often, these types of models work well for information diffusion modeling \cite{Tambuscio15} rather than disease propagation modeling. As the primary goal of this paper is the accurate modeling of measles, unfitting models for this topic will be disregarded. Often, models that demonstrate interesting behavior on complex networks behave in a fashion that facilitates better accuracy in modeling disease propagation \cite{Hethcote2000TheMO,Pastor_satorras2014}. An even better approximation model than the SIR model for use in modeling disease propagation is described by Hethcote \cite{Hethcote2000TheMO}. In particular, he presents a Susceptible-Exposed-Infected-Recovered (SEIR) model and a number of variations of the model due to changing disease behavioral phenomena. The SEIR model described by Hethcote has been compared to real world infection data through simulations, demonstrating a reasonable degree of accuracy \cite{Montalan19}. The model forwarded later by this paper is a variation of Hethcote's SEIR model, except that the proposed model does not have a dynamically changing population size similar to the one presented in Hethcote's model \cite{Hethcote2000TheMO}.\par
-Many studies have been published examining or analyzing the general propagation of diseases within a specific real-world population \cite{pinkbookMeasles,measlesIncidence,Jasem2012Elsevier,Mcbrein2003,Sugarman2010}. Using these findings, various models have been proposed with the intent of accurately modeling properties of measles described by related studies. Most of these models are reasonably successful, but there are still a number of areas in which improvement is needed. For example, the initial infection rate of measles is rarely considered in most models. It is also often the case that the number of individuals within a compartment- susceptible, exposed, infected, and recovered-are fit to a graph for the model, but an accurate simulation of similar time scaling is not also taken into account. Specifically, sometimes the graphs may demonstrate a best fit phenomena, but the timescales of the two graphs differ. As such, most models trade off accuracy in one area for greater accuracy in a targeted area. This often produces great results in the targeted area, but then the neglected behaviors typically stray reasonably far from historical data. The model proposed within this paper hopes to rectify this trade-off discrepancy due to parameter priority. \par
-In defining most diseases mathematically, a number of attributes are generally well defined that can be used to describe the disease's behavior. The first of these is the secondary infection rate, which is the percentage of people that will become infected due to contact with an infected individual. For measles in particular, this value is about 0.9, meaning an infected individual will infect 90\% of those they interact with on a daily basis \cite{pinkbookMeasles}. For most measles outbreaks, the peak of infected individuals is typically within the range of 90-120 days \cite{pinkbookMeasles}.Two additional important terms to define would the period of infection and incubation. The period of incubation is the length of time an infected individual carries a disease without it manifesting, which for measles is 10-12 days on average \cite{pinkbookMeasles}. This is equivalent to being within the exposed compartment in the SEIR model. Accordingly, the time infected before an individual recovers is typically 5-6 days on average for measles \cite{pinkbookMeasles}. The last important term that needs defining is r0, which is the average number of people typically infected directly by the first infected individual \cite{JamesR0}. For measles, this value is 12-18 individuals on average \cite{pinkbookMeasles}. For the purpose of this paper, these parameters should suffice in simulating the disease. 
+In general, the modeling and simulation of diseases propagation is often implemented using an already existing model as a base. The most simplistic model that demonstrates propagation capabilities is the Susceptible-Infected (SI) model. In this model, individuals are either unexposed to an infection or infected. Due to the simplicity of the model, it is often a poor means by which to model the propagation of actual diseases. An improvement is made by the SIR model, which adds a recovered compartment that is used to account for individuals that have either survived or perished from the disease. Some models make a distinction between recovery and death, but most rarely differentiate between them. Often, these types of models work well for information diffusion modeling \cite{Tambuscio15} rather than disease propagation modeling. As the primary goal of this paper is the accurate modeling of measles, unfitting models for this topic will be disregarded. Often, models that demonstrate interesting behavior on complex networks behave in a fashion that facilitates better accuracy in modeling disease propagation \cite{Hethcote2000TheMO,Pastor_satorras2014}. An even better approximation model than the SIR model for use in modeling disease propagation is described by Hethcote \cite{Hethcote2000TheMO}. In particular, he presents a Susceptible-Exposed-Infected-Recovered (SEIR) model and a number of variations of the model due to changing disease behavioral phenomena. The SEIR model described by Hethcote has been compared to real world infection data through simulations, demonstrating a reasonable degree of accuracy \cite{Montalan19}. The model forwarded later by this paper is a variation of Hethcote's SEIR model, except that the proposed model does not have a dynamically changing population size similar to the one presented in Hethcote's model \cite{Hethcote2000TheMO}.
+
+Many studies have been published examining or analyzing the general propagation of diseases within a specific real-world population \cite{pinkbookMeasles,measlesIncidence,Jasem2012Elsevier,Mcbrein2003,Sugarman2010}. Using these findings, various models have been proposed with the intent of accurately modeling properties of measles described by related studies. Most of these models are reasonably successful, but there are still a number of areas in which improvement is needed. For example, the initial infection rate of measles is rarely considered in most models. It is also often the case that the number of individuals within a compartment- susceptible, exposed, infected, and recovered-are fit to a graph for the model, but an accurate simulation of similar time scaling is not also taken into account. Specifically, sometimes the graphs may demonstrate a best fit phenomena, but the timescales of the two graphs differ. As such, most models trade off accuracy in one area for greater accuracy in a targeted area. This often produces great results in the targeted area, but then the neglected behaviors typically stray reasonably far from historical data. The model proposed within this paper hopes to rectify this trade-off discrepancy due to parameter priority.
+
+In defining most diseases mathematically, a number of attributes are generally well defined that can be used to describe the disease's behavior. The first of these is the secondary infection rate, which is the percentage of people that will become infected due to contact with an infected individual. For measles in particular, this value is about 0.9, meaning an infected individual will infect 90\% of those they interact with on a daily basis \cite{pinkbookMeasles}. For most measles outbreaks, the peak of infected individuals is typically within the range of 90-120 days \cite{pinkbookMeasles}.Two additional important terms to define would the period of infection and incubation. The period of incubation is the length of time an infected individual carries a disease without it manifesting, which for measles is 10-12 days on average \cite{pinkbookMeasles}. This is equivalent to being within the exposed compartment in the SEIR model. Accordingly, the time infected before an individual recovers is typically 5-6 days on average for measles \cite{pinkbookMeasles}. The last important term that needs defining is \ro, which is the average number of people typically infected directly by the first infected individual \cite{JamesR0}. For measles, this value is 12-18 individuals on average \cite{pinkbookMeasles}. For the purpose of this paper, these parameters should suffice in simulating the disease. 
 
 \section{Problem Statement} %Nima
 The rise of social media has given people new ways to communicate and share ideas. In theory, anyone with a Twitter account can reach millions of people using only a computer with an internet connection. It is clear that online social networks have effects outside the digital world, but the extent and nature of these effects is less certain. The spread of beliefs via social media that vaccines are unsafe or harmful has received attention in the news, so we chose to model the spread of misinformation related to vaccines and how it might affect the spread of diseases. Measles is well-studied and effectively preventable, thus it is amenable to the kind of analysis we propose. In this paper, we combine an information diffusion model with an epidemic model to explore the effects of fact-checking on vaccine hesitancy.
@@ -57,49 +57,61 @@ The information diffusion model is based on a well-known compartmental model cal
 The focus of this paper is on describing and testing the epidemic model. In addition to compartments S, I and R, we add an E compartment to represent people exposed to the virus but not yet contagious (infective). The population of interest is modeled by an undirected network where each node represents a person and each edge represents daily contact with another person sufficient to transmit the disease. For each step of the simulation, nodes with infective neighbors have a chance of $\alpha$ to become "exposed", which means they have "caught" the disease but are not yet able to infect others. Transitions from E to I and from I to R are determined by thresholds set for each node. These thresholds represent the number of days spent in the incubation period (compartment E) and infectious period (compartment I) and are set based on epidemiological data. They are randomly chosen from a Gaussian distribution to reflect variation between individuals. When the number of days in the current compartment reaches the threshold, the node transitions to the next compartment (either E-I or I-R). Additionally, each node in the I compartment has a chance each timestep to move to R regardless of the threshold. This represents death due to the disease and is described by the parameter $\zeta$.
 
 The dynamic behavior of epidemic processes can be described by certain threshold values. The most important of these is called the basic reproduction number $R_0$. It is the number of people a single infective person is expected to infect in a completely susceptible population. It is known that if $R_0 < 1$, the disease will not invade the population.\cite{Hethcote2000TheMO} Higher $R_0$ values correspond to more virulent infections. Measles is one of the most contagious diseases recorded with $R_0$ values ranging from 12 to 18.\cite{pinkbookMeasles}
+
 \section{Proposed Model} %Seif
-We propose a model that combine the information diffusion model [SIR]by adding new compartment E(exposed) to represent people exposed to virus but not yet infective. It will  be [SEIR] model S: susceptible  E: exposed  I : infected  R: recovered. We define transition between compartment by a threshold transition (TT) and has a value 0 or 1, where $\tau_i$ is the period node $i$ stayed in the compartment and $X$ the the threshold period the node $i$ should remain until transition occurs. The following values are chosen from a Gaussian distribution:
-\begin{itemize}
-    \item Threshold incubation from E-I in days (mean 11 days, variance 2) 
-    \item Threshold infection period from I-R in days (mean 6, variance 1)
-\end{itemize}
-The death rate from I-R due to disease is 0.2\%.
+We propose a model that combine the information diffusion model [SIR]by adding new compartment E(exposed) to represent people exposed to virus but not yet infective. It will  be [SEIR] model\\
+S: susceptible  E: exposed  I : infected  R: recovered\\
+We define transition between compartment by a threshold transition (TT) and has a value 0 or 1:
 \begin{align*}
     \text{Threshold transition}(TT) &= \frac{\tau_{i}}{X}\\
     \text{Threshold transition}(TT^{I}) &=%
     \begin{cases}
-    1 &\text{if} \tau_{i}^{I} \geq X_{I}\\
+    1 &\text{if } \tau_{i}^{I} \geq X_{I}\\
     0 &\text{otherwise}
     \end{cases}\\
     \text{Threshold transition}(TT^{R}) &=%
     \begin{cases}
-    1 &\text{if} \tau_{i}^{R} \geq X_{R}\\
+    1 &\text{if } \tau_{i}^{R} \geq X_{R}\\
     0 &\text{otherwise}
     \end{cases}
 \end{align*}
-\subsection{formulation}
+where $\tau_{i}$ is the period of node i stayed in the compartment and X is the threshold period the node i should remain until transition occur.The following threshold values are chosen from Gaussian distribution:
+\begin{itemize}
+    \item Threshold incubation period from E-I  [Mean 11, variance 2] days
+    \item Threshold infection period from I-R  [Mean 6, variance 1] days
+\end{itemize}
+Death rate from I- R  due to disease 0.2\%
+\subsection{Formulation}
 \begin{align*}
     \text{Threshold transition}(TT) &= \frac{\tau_{i}}{X}\\
     \text{Threshold transition from E-I}(TT^{I}) &=%
     \begin{cases}
-    1 &\text{if} \tau_{i}^{I} \geq X_{I}\\
+    1 &\text{if } \tau_{i}^{I} \geq X_{I}\\
     0 &\text{otherwise}
     \end{cases}\\
     \text{Threshold transition from I-R}(TT^{R}) &=%
     \begin{cases}
-    1 &\text{if} \tau_{i}^{R} \geq X_{R}\\
+    1 &\text{if } \tau_{i}^{R} \geq X_{R}\\
     0 &\text{otherwise}
     \end{cases}
 \end{align*}
-where $\tau_i$ is the period node $i$ stayed in the compartment and $X$ is the threshold period the node $i$ should remain until transition occurs. 
-\begin{tabular}{C | C | C | C }
+where i is the period of node i stayed in the compartment and X is the threshold period the node i should remain until transition occur
+\begin{table}[t]
+    \centering
+   \begin{tabular}{|C | C | C | C |}
+        \hline
         \hphantom{ } & E & I & R\\
         \hline
         E &  1-TT^{I} & TT^{I} & 0\\
+        \hline
         I &  0 & 1-TT^{R} & TT^{R}\\
+        \hline
         R &  0 & 0 & 1\\
+        \hline
    \end{tabular}
-   \captionof*{table}{Transition Matrix}
+    \caption{Transition Matrix}
+    \label{tab:trans_matrix}
+\end{table}
 
 \section{Experiment} %Nima
 We performed two sets of computational experiments to evaluate our model. In our first set of experiments, we compared the basic reproduction number \ro of our model disease with estimates of \ro for measles. \ro acts as a threshold in most infection models: if $R_0 > 1$ the infection spreads and if $R_0 < 1$ it does not. It can be estimated from epidemiological data or from a mathematical model. It should not be viewed as a constant value that is fixed for a given disease. Different mathematical models can even provide conflicting estimates, and it is often impossible to measure directly in practice.\cite{Li2011TheFO} It is useful for confirming that our model behaves similarly to other epidemiological models and can serve as a rough measure of the infectiousness of a disease.
@@ -144,21 +156,21 @@ We also evaluated our model against outbreak data taken from a case study.\cite{
 \begin{figure}[t]
     \centering
     \includegraphics[scale=0.5]{images/mse_er.png}
-    \caption{MSE between model and historical data, Erdos-Renyi contact network}
+    \caption{MSE between model and historical data for different numbers of edges, Erdos-Renyi contact network}
     \label{fig:mse_er}
 \end{figure}
 
 \begin{figure}[t]
     \centering
     \includegraphics[scale=0.5]{images/mse_ba.png}
-    \caption{MSE between model and historical data, Barabasi-Albert contact network}
+    \caption{MSE between model and historical data for different outdegrees, Barabasi-Albert contact network}
     \label{fig:mse_ba}
 \end{figure}
 
 \begin{figure}[t]
     \centering
     \includegraphics[scale=0.5]{images/mse_ws.png}
-    \caption{MSE between model and historical data, Watts-Strogatz contact network}
+    \caption{MSE between model and historical data for different outdegrees, Watts-Strogatz contact network}
     \label{fig:mse_ws}
 \end{figure}
 
@@ -175,7 +187,7 @@ On average, there were thirty-seven people still susceptible at the end of the e
 The lower \ro for the real-world data could potentially be explained by immunization. A fully immune person will never become infected, so they are effectively removed from the contact graph. Under the conditions of \textit{herd immunity}, there are enough immunized people that the disease does not survive in the population. Under these conditions the contact graph is broken into many different connected components so the disease cannot propagate.\cite{pinkbookMeasles} According to the case study, immunization rates in the affected area were around 66 percent\footnote{The national average was 76\% at the time}, so a large portion of the population was not susceptible to the disease. We are ultimately interested in studying the effects of social networks on these contact networks and resulting epidemic processes. 
 
 \section{Future Work} %Joe 
-For future consideration, the authors plan to improve the time-scaling accuracy of the model to a great degree. The current model demonstrates accurate modeling for the R0 phenomena and best-fit graphs, but the time scaling is not the most accurate. For associated real-world data,\cite{Jasem2012Elsevier,Mcbrein2003,Sugarman2010} the peak of infection typically lies within the 90-120 day range due to the average incubation period of measles. In most of our simulations where R0 accuracy was given priority though, the average range was noticeably smaller than 90 days. Initially we suspected this could be due to the random graphs that we used to validate our simulations. This lead us to examine the possibility that this inaccuracy was due to the general size of the associated graphs. Increasing the population sizes made a significant difference in modeling for the WS network, but the simulated ER and BA interaction networks demonstrated similar total steps independent of the population size. As a result, different considerations will need to be made so that the model will scale well to real-world data better. Since the WS and BA networks used to validate the model are synthetic in nature, the model was not appropriately tested as rigorously against real-world estimates. Accordingly, the model will need to be properly tested against similar real-world outbreaks. So while the model preforms accurately when compared to the expected historical r0 value, improvements must be made in order to demonstrate that the model accurately generalizes when modeling all of measles' real-world behavioral facets. 
+For future consideration, the authors plan to improve the time-scaling accuracy of the model to a great degree. The current model demonstrates accurate modeling for the R0 phenomena and best-fit graphs, but the time scaling is not a factor that we heavily examine. For associated real-world data,\cite{Jasem2012Elsevier,Mcbrein2003,Sugarman2010} the peak of infection typically lies within the 90-120 day range due to the average incubation period of measles. In most of our initial simulations where R0 accuracy was given priority though, the average range was noticeably smaller than 90 days. Initially we suspected this could be due to the random graphs that we used to validate our simulations. This lead us to examine the possibility that this inaccuracy was due to the general size of the associated graphs. Increasing the population sizes made a significant difference in modeling for the WS network, but the simulated ER and BA interaction networks demonstrated similar total steps independent of the population size. As a result, different considerations will need to be made so that the model will scale well to real-world data better for total timescale. Accordingly, the model will need to be properly tested against similar real-world outbreaks further in order to continue validating the demonstrated results. So while the model preforms accurately when compared to the expected historical r0 value, improvements must be made in order to demonstrate that the model accurately generalizes when modeling all of measles' real-world behavioral facets. 
 
 
 \section{Conclusion} %Seif
