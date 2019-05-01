@@ -150,7 +150,7 @@ gen=snap.TRnd()
 
 
 ER_Nodes=100000
-ER_Edges=400000
+ER_Edges=600000
 #Single instance for ER graph.
 gen.PutSeed(current_seed)
 graphER=Graph(alpha,zeta)
