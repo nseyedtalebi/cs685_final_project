@@ -17,6 +17,7 @@ cores = 4
 current_seed=6
 gen=snap.TRnd()
 gen.PutSeed(6)
+zeta_dublin = 3/395.0
 
 def amounts_add(x,y):
 	return tuple([x[i]+y[i] for i in range(0,4)])
@@ -112,7 +113,7 @@ def load_dublin_case_data():
 			dublin[int(r[0])]=int(r[1])
 	return dublin
 
-def get_mse_different_methods(write_output=True):
+def get_mse_different_methods(num_nodes,ensemble_size,write_output=True):
 	dublin = load_dublin_case_data()
 	mses = defaultdict(dict)
 	for i in range(1,20):
@@ -132,7 +133,7 @@ def run_best_model():
 	ensemble_size = 10000
 	'''With 355 infected in the case study and a 90% secondary attack rate,
 	there were about 355/0.9 sufficent contacts'''
-	zeta_dublin = 3/395.0
+
 	dublin = load_dublin_case_data()
 	er_mse = {}
 	#22: 831.1648814579835

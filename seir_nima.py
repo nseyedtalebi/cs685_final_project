@@ -1,5 +1,5 @@
 '''Main module was written by Joe, and Nima created this modified version in
-an attept to parallelize the code and increase performance'''
+an attept to parallelize the code and increase performance. It didn't help'''
 import sys
 import random
 import time
