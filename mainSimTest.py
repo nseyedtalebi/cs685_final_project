@@ -1,3 +1,4 @@
+#Made by Joe Kaninberg
 from model import *
 import sys
 import snap
