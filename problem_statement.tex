@@ -1,0 +1,214 @@
+%% bare_conf.tex
+%% V1.4b
+%% 2015/08/26
+%% by Michael Shell
+%% See:
+%% http://www.michaelshell.org/
+%% for current contact information.
+%%
+%% This is a skeleton file demonstrating the use of IEEEtran.cls
+%% (requires IEEEtran.cls version 1.8b or later) with an IEEE
+%% conference paper.
+%%
+%% Support sites:
+%% http://www.michaelshell.org/tex/ieeetran/
+%% http://www.ctan.org/pkg/ieeetran
+%% and
+%% http://www.ieee.org/
+\documentclass[conference]{IEEEtran}
+\usepackage{url}
+\usepackage{amsmath,mathtools}
+
+\begin{document}
+%
+% paper title
+% Titles are generally capitalized except for words such as a, an, and, as,
+% at, but, by, for, in, nor, of, on, or, the, to and up, which are usually
+% not capitalized unless they are the first or last word of the title.
+% Linebreaks \\ can be used within to get better formatting as desired.
+% Do not put math or special symbols in the title.
+\title{Problem Statement}
+
+
+% author names and affiliations
+% use a multiple column layout for up to three different
+% affiliations
+\author{\IEEEauthorblockN{Nima Seyedtalebi,
+Joseph Kaninberg,
+Seifalla Moustafa
+}
+\IEEEauthorblockA{Department of Computer Science\\
+University of Kentucky\\
+Lexington, KY 40506--0633}
+}
+
+% make the title area
+\maketitle
+
+\begin{abstract}
+The rise of social media has given people new ways to communicate and share ideas. In theory, anyone with a Twitter account can reach millions of people using only a computer with an internet connection. It is clear that online social networks have effects outside the digital world, but the extent and nature of these effects is less certain. The spread of beliefs via social media that vaccines are unsafe or harmful has received attention in the news, so we chose to model the spread of misinformation related to vaccines and how it might affect the spread of diseases. Measles is well-studied and effectively preventable, thus it is amenable to the kind of analysis we propose. In this paper, we combine an information diffusion model with an epidemic model to explore the effects of fact-checking on vaccine hesitancy.
+\end{abstract}
+
+%\section{Introduction}
+%In 2018, sixty-nine percent of Americans (about 225,745,530) used at least one social media %platform.\cite{pewSocial},\cite{usCensus} 
+% Other models make use of additional compartments to model other aspects of a disease process. The SEIR model we chose to model measles epidemics divides the population into susceptible, exposed, infective, and recovered. The choice of compartmental model depends on the process being modeled, so the model must match the behavior of the disease. For example, an SEIR model would be inappropriate for diseases where there is no natural immunity or vaccine
+\section{Problem Statement}
+We are interested in the effects of information diffusion and fact-checking on the prevalence of an infectious disease. We cannot test this directly so instead we propose a model that combines the information diffusion/fact-checking model from \cite{Tambuscio15} and the classic SEIR model described in \cite{Montalan19}. In our combined model, we consider both a social network and several different populations simultaneously. Imagine superimposing a social network on a (geographical) map so each node in the social network is associated with the place where that person lives. Each person in the network has a physical location and might interact with people outside of the social network. This confluence is what we aim to explore.
+
+The information diffusion model is based on a well-known compartmental model called SIS (susceptible-infective-susceptible). Compartmental models divide the population into separate compartments or groups based on status. The dynamics of the disease process are captured by the movement of people between the compartments.\cite{Hethcote2000TheMO} The model introduced in \cite{Tambuscio15} subdivides the infective (I) compartment into fact-checkers (F) and believers (B). These processes are considered:
+\begin{itemize}
+    \item Spreading ($S \rightarrow B$, $S \rightarrow F$): susceptible person believes hoax or becomes fact-checker
+    \item Verifying ($B \rightarrow F$): Believer becomes fact-checker, rejects the hoax, and spreads fact-checking behavior instead of misinformation
+    \item Forgetting ($B \rightarrow S$, $F \rightarrow S$): Believer or fact-checker forgets about the hoax
+\end{itemize}
+The information diffusion process happens in a social network represented by a graph $G = (V,E)$, where nodes and edges represent people and relationships. Each node has an associated ordered triple of binary indicator variables:
+\begin{align}
+    s_{i} &= \left[ s^{B}_{i}(t),s^{F}_{i}(t),s^{S}_{i}(t) \right] = \left\{ \begin{matrix}
+    \left[1,0,0\right]\\
+    \left[0,1,0\right]\\
+    \left[0,0,1\right]
+    \end{matrix}
+    \right.
+\end{align}
+The behavior of the system at time $t+1$ is given by the following equations:
+\begin{align}
+    s_{i}(t+1) &= MultiRealize\left[p_{i}(t+1)\right]\\
+    p_{i}(t) &= \left[p^{B}_{i},p^{F}_{i},p^{S}_{i} \right]\label{inf_diff:p}
+\end{align}
+Here, $p$ represents the probability of changing to each of the possible states. $p^{B}_{i}$ is the probability that node $i$ transition into the believer compartment. Similarly, we have $p^{F}_{i}$ for fact-checkers and $p^{S}_{i}$ for susceptible people. In the equations describing the model, a capital "B", "F", or "S" in superscript means that the thing with the superscript is associated with believers, fact-checkers, or susceptibles, respectively. "MultiRealize" means we choose a random realization of $p$ for each node $i$. The probabilities in equation \ref{inf_diff:p} are given by:
+\begin{align}\label{inf_diff:probs}
+    p^{B}_{i}(t+1) &= f_{i}s_{i}^{S}(t) \left(1 - p_{forget} - p_{verify}\right)s_{i}^{B}(t)\\
+    p^{F}_{i}(t+1) &= g_{i}s_{i}^{S}(t) + p_{verify}s_{i}^{B}(t)+ (1 - p_{forget})s_{i}^{F}(t)\\
+    p^{S}_{i}(t+1) &= p_{forget}\left(s_{i}^{B}(t) + s_{i}^{F}(t)\right) + \left(1 - f_{i} - g_{i}\right)s_{i}^{S}(t)
+\end{align}
+The functions $f$ and $g$ that appear in equations \ref{inf_diff:probs} are called "spreading functions" by the authors of \cite{Tambuscio15} because they describe how the hoax (or fact-checking) spreads through the network. In the equations that follow, $n_{i}^{F,B}(t)$ is the number of fact-checker or believers adjacent to node $i$. These functions are evaluated for each node at each time step:
+\begin{align}
+    f_{i} &= \beta\frac{n_{i}^{B}(1 + c_{h})}{n_{i}^{B}(1+c_{h})+n_{i}^{F}(1-c_{h})}\\
+    g_{i} &= \beta\frac{n_{i}^{F}(1 - c_{h})}{n_{i}^{B}(1+c_{h})+n_{i}^{F}(1-c_{h})}
+\end{align}
+
+% An example of a floating table. Note that, for IEEE style tables, the
+% \caption command should come BEFORE the table and, given that table
+% captions serve much like titles, are usually capitalized except for words
+% such as a, an, and, as, at, but, by, for, in, nor, of, on, or, the, to
+% and up, which are usually not capitalized unless they are the first or
+% last word of the caption. Table text will default to \footnotesize as
+% the IEEE normally uses this smaller font for tables.
+% The \label must come after \caption as always.
+%
+\begin{table}[!t]
+% increase table row spacing, adjust to taste
+\renewcommand{\arraystretch}{1.3}
+% if using array.sty, it might be a good idea to tweak the value of
+% \extrarowheight as needed to properly center the text within the cells
+\caption{Parameters for Combined Model}
+\label{tbl:params}
+\centering
+%% Some packages, such as MDW tools, offer better commands for making tables
+%% than the plain LaTeX2e tabular which is used here.
+\begin{tabular}{|c c c|}
+\hline
+Parameter & Description & Source\\
+\hline
+$\lambda$ & Annual birth rate & Census Data\\
+\hline
+$\mu$ & Annual death rate & Census Data\\
+\hline
+$\beta$ & Transmission rate & Epidemiological Data\\
+\hline
+$\epsilon$ & Incubation rate & Epidemiological Data\\
+\hline
+$\gamma$ & Recovery rate & Epidemiological Data\\
+\hline
+$\zeta$ & Infectious mortality rate & Epidemiological Data\\
+\hline
+$\alpha$ & Immunity loss rate & Epidemiological Data\\
+\hline
+$S_{0}$ & Initial susceptible &  Chosen by Experimenters\\
+\hline
+$E_{0}$ & Initial exposed &  Chosen by Experimenters\\
+\hline
+$I_{0}$ & Initial infectious &  Chosen by Experimenters\\
+\hline
+$R_{0}$ & Initial recovered &  Chosen by Experimenters\\
+\hline
+$p_{forget}$ & Forgetting probability & Chosen by Experimenters\\
+\hline
+$p_{verify}$ & Fact-checking probability & Chosen by Experimenters\\
+\hline
+$c_{h}$ & Credibility of hoax & Chosen by Experimenters\\
+\hline
+\end{tabular}
+\end{table}
+%
+\begin{table}[!t]
+% increase table row spacing, adjust to taste
+\renewcommand{\arraystretch}{1.3}
+\caption{Other Variables for Combined Model}
+\label{tbl:params}
+\begin{tabular}{|c l|}
+\hline
+Variable & Description\\
+\hline
+$s_{i}$ & State of node\\
+\hline
+$s_{i}^{B, F, S}$ & Binary indicator variables for status of node $i$\\
+\hline
+$p_{i}(t)$ & Transition probabilities\\
+\hline
+$p_{i}^{B, F, S}(t+1)$ & Probability node $i$ transitions to $B$,$F$,$S$\\
+\hline
+$S_i$ $E_i$ $I_i$ $R_i$ & Number of people in compartment at time step $i$\\
+\hline
+$N_i$ & Size of population at time step $i$\\
+\hline
+$n_{i}^{B,F}$ & number of adjacent believers, fact-checkers\\
+\hline
+\end{tabular}
+\end{table}
+
+The SEIR model for the disease process is based on a system of differential equations. Each equation gives the rate of change (in population) of its associated compartment:
+\begin{align}
+    \frac{dS_{i}}{dt} &= \alpha R_{i} - \frac{\beta_{i} S_{i} I_{i}}{N_{i}} + \lambda N_{i} - \mu S_{i}\\
+    \frac{dE_{i}}{dt} &= \frac{\beta_{i} S_{i} I_{i}}{N_{i}} - (\epsilon + \mu ) E_{i}\\
+    \frac{dI_{i}}{dt} &= \epsilon E_{i} - (\gamma + \zeta + \mu)I_{i}\\
+    \frac{dR_{i}}{dt} &= \gamma I_{i} - (\alpha + \mu)R_{i}\\
+    \frac{dN_{i}}{dt} &= S_{i} + E_{i} + I_{i} + R_{i}
+\end{align}
+We add the following to keep track of the state of each person in the population:
+\begin{align}
+    POP_{i} &= \left[ s^{S}_{i}(t),s^{E}_{i}(t),s^{I}_{i}(t),s^{R}_{i}(t) \right] = \left\{ \begin{matrix}
+    \left[1,0,0,0\right]\\
+    \left[0,1,0,0\right]\\
+    \left[0,0,1,0\right]\\
+    \left[0,0,0,1\right]
+    \end{matrix}
+    \right.
+\end{align}
+For each step of the information diffusion process, the parameters for the differential equations could change. To combine the models, we do the following:
+\begin{enumerate}
+    \item Use the information diffusion process to set the parameters for the differential equations
+    \item Solve the equations to get expressions for $S$,$E$,$I$,$R$, and $N$ at time $t$
+    \item Use these expressions to calculate the probability that a given node will transition to a given compartment at time $t$
+    \item Update $POP_{i}$
+\end{enumerate}
+Now we describe specifically how the information diffusion process can update the parameters of the SEIR model. SEIR includes birth and death rates, so at each step in the process people could be born or die. We make the following assumptions:
+\begin{itemize}
+    \item If a believer (of the hoax) has a child, the child is not vaccinated
+    \item If a fact-checker has a child, the child is vaccinated
+    \item If a susceptible or person not part of the social network has a child, the child may or may not be vaccinated depending on the existing vaccination coverage percentage in the population before the information diffusion process
+    \item Vaccines are given in a single dose immediately following birth
+    \item Vaccines reach their maximum effectiveness instantly
+    \item Each person in a population has an equal chance to encounter any other person in that population
+\end{itemize}
+
+To perform simulations, we need a sample social network and populations that the people in the network live among. We can generate random social networks with a variety of methods e.g. Erdos-Renyi, Barabasi-Albert, et cetera. Then, we generate populations of various sizes to represent virtual cities and towns. The distribution of population sizes will be chosen to match recent census data to better reflect how human populations are actually distributed. 
+
+Finally, we assign each member of the social network to one of the virtual cities. To do this, we use census data again, this time to determine e.g. what fraction of the social network should live in cities. For example, if the census data says that 65\% of the US population lives in a city of 100,000+ people, then for a given node there is a 65\% chance that node will be assigned to a city of size 100,000+. If we have several cities of the same size, we choose one of them randomly.
+
+\bibliographystyle{IEEEtran}
+\bibliography{IEEEabrv,final_project}
+
+\end{document}
+
+
