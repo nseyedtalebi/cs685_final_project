@@ -1,7 +1,8 @@
+#Written by Nima
 import pickle
 
 import matplotlib.pyplot as plt
-from seir import dict_results_to_lists
+from seir_nima import dict_results_to_lists
 
 with open('mses.pkl','r') as inf:
     mses = pickle.load(inf)

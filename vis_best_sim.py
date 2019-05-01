@@ -1,8 +1,9 @@
+#Written by Nima
 import pickle
 from collections import defaultdict
 
 import matplotlib.pyplot as plt
-from seir import dict_results_to_lists
+from seir_nima import dict_results_to_lists
 from simulations import load_dublin_case_data
 
 def get_by_week(sim_results):
