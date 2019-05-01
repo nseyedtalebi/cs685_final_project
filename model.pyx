@@ -1,4 +1,4 @@
-
+#Made by Joe Kaninberg
 import random
 #Unsure Aspects: X is a normally distributed random variable, but unsure as to the range. Defined best guess in do_simulation function.
 #WS seems to be the slowest, most aberrant behavior.
