@@ -1,3 +1,4 @@
+#Made by Joe Kaninberg
 import sys
 from random import randint
 
@@ -109,7 +110,7 @@ beta=float(sys.argv[5])
 graph=Loadgraph(sys.argv[1],pforget,pverify,alpha,beta)
 infected=randint(0,len(graph.verts))
 graph.states[infected]=(1,0,0)
-graph.do_simulation(300)
+graph.do_simulation(1000)
 #nif -> number of fact checker neighbors.
 #nib -> number of believer neighbors.
 
