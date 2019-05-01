@@ -1,0 +1,100 @@
+\documentclass{article}
+
+\author{Nima Seyedtalebi}
+\title{CS685 Literature Review 2}
+\begin{document}
+\maketitle
+\section{Introduction}
+Herein, we review the following four papers:
+\begin{enumerate}
+    \item \textit{The Mathematics of Infectious Diseases} by Herbert Hethcote
+    \item \textit{Limiting the Spread of Misinformation in Social Networks} by Ceren Budak et al.
+    \item \textit{Epidemic Processes in Complex Networks} by Romualdo Pastor-Satorras et al.
+    \item \textit{Network Segregation in a Model of Misinformation and Fact-checking} by Marcella Tambuscio et al.
+\end{enumerate}
+
+\section{Hethcote}
+    \subsection{Contributions}
+    This paper includes a survey mathematical epidemiology that covers the SIR (Susceptible-Infective-Recovered) epidemic model, SIR with birth and death (vital dynamics) endemic model, MSEIR (Passive iMmunity-Susceptible-Exposed-Infective-Recovered), and SEIR endemic models. Equations are derived for the basic reproduction number $R_{0}$, or the average number of new infections when an infective is introduced into a completely susceptible population. The expressions for $R_{0}$ for the MSEIR and SEIR models are new results which are tested using real-world data.
+    
+    In the latter part of the paper, the MSEIR and SEIR models are applied to real-world cases: measles in a town in Niger and pertussis in the United States. Various parameters are estimated using demographic and other kinds of information about the populations and disease in question. Finally, the results of simulations based on the models are compared to the formulas for $R_{0}$ derived earlier in the paper.
+    
+    \subsection{Strengths}
+    \begin{itemize}
+        \item Thorough introduction to classical results
+        \item Includes application of models to the real world
+    \end{itemize}
+    
+    \subsection{Weaknesses}
+    \begin{itemize}
+        \item There is nothing that compares prediction of models to real-world outcomes
+        \item The paper ends abruptly without conclusion, summary, or any discussions of future work. 
+    \end{itemize}
+    
+    \subsection{Relation to Our Research}
+    The mathematical models in this paper will serve as the basis for our models. However, we are interested in a disease process and an information diffusion process, both occurring in a complex network, so our work will be an extension and application of these methods. 
+    
+\section{Budak et al.}
+    \subsection{Contributions}
+    This paper presents an optimization problem concerned with choosing a subset of nodes in a social network to minimize the effect of a "bad" influence campaign. The authors' strategy is to launch a competing "good" influence campaign\footnote{"Bad" and "good" are relative terms used by the authors of the paper for convenience. We leave the determination of which campaigns are "bad" and which are "good" as an exercise for the reader!} on some subset of the network to maximize the number of nodes with "good" information at steady state. A mathematical description, proof of NP-Hardness, and evaluation on data from Facebook are included.
+    
+    The authors describe a model called the Multi-Campaign Independent Cascade Model (MCICM). It is based on the well-studied Independent Cascade Model (ICM). In the MCICM, a node is "active" when it successfully receives either the "bad" or "good" information. When activated, a node has a single chance to activate each of its neighbors with some probability that depends on which campaign it is from. They also describe a similar model where the spreading probability is associated with each edge called Campaign-Oblivious Independent Cascade Model (COICM). Finally, they discuss methods for estimating parameters and applying their models when information about the "bad" campaign and network is incomplete.
+    \subsection{Strengths}
+    \begin{itemize}
+        \item The theoretical part includes several proofs which may prove useful later. Subsequent work may be able to use those proofs to learn or prove things about a model based on MCICM or COICM.
+        \item The methods introduced are compared with existing or simpler methods. When the simpler/faster/easier methods are better, the authors make that clear
+    \end{itemize}
+    
+    \subsection{Weaknesses}
+    \begin{itemize}
+        \item Using predictions/estimations when the information is incomplete may not be necessary.  Deciding whether or not they are necessary would require further analyses not presented in this paper. The authors acknowledged this.
+        \item Model does not account for forgetting - once a node is active, it remains active and in the same state for the rest of the simulation.
+    \end{itemize}
+    
+    \subsection{Relation to Our Research}
+    Our proposed work includes both an information diffusion component and an epidemic-modelling component, so the applications are different. The paper that inspired our work uses a model that allows for transitions between states after activation - they modeled "forgetting" as well. We will likely use one of those models instead of the ones presented here.
+    
+\section{Pastor-Satorras et al.}
+    \subsection{Contributions}
+    \textit{Epidemic Processes in Complex Networks} is a broad survey paper that begins with background information about epidemic modeling and network theory, then continues through the state of the art at the time of writing\footnote{The paper was uploaded to the arXiv September 18th, 2015}. Significant space is devoted to the SIS and SIR models as they are fundamental for this field.
+    
+    The latter half of the paper deals with more realistic and complex models. The SEIR (Susceptible-Exposed-Infective-Recovered) and SIRS (Susceptible-Infective-Recovered-Susceptible) are introduced. Additional network theory topics are covered to describe realistic networks. The paper concludes with sections about epidemic processes in temporal networks, metapopulation models where nodes represent places where multiple people could be located instead of individuals, and social contagion processes. 
+    
+    \subsection{Strengths}
+    \begin{itemize}
+        \item Thorough treatment of fundamental topics makes understanding the subject easier
+        \item Adding figures instead of only text aids understanding as well
+    \end{itemize}
+    
+    \subsection{Weaknesses}
+    \begin{itemize}
+        \item The paper is a few years old. If progress continues to be quick in this area, a new survey may be needed soon.
+        \item Sections on more complex models like SEIR and SIRS were much shorter than earlier sections. Models that include passive immunity (M) are not discussed.
+    \end{itemize}
+    
+    \subsection{Relation to Our Research}
+    Our proposed work will draw upon the foundations described in this paper. To our knowledge, there are no mentions of models that combine information diffusion and disease modeling.
+
+\section{Tambuscio et al.}
+    \subsection{Contributions}
+    In this paper, the authors explore the effects of network segregation on their SIS-based model of misinformation spread. In their model, the infective compartment is divided into two groups: believers (of the misinformation) and fact-checkers who can cause believers to become fact checkers. Members of either group can become susceptible again by forgetting.
+    
+    The results indicate that segregation in networks is important when the forgetting probability is low. For example, if forgetting probability is low, a group of skeptics are more likely to become fact-checkers as a whole, whereas a more gullible group are more likely to believe the misinformation.
+    \subsection{Strengths}
+    \begin{itemize}
+        \item This paper adds some additional comments and details about the model compared to the one it is introduced in
+        \item Good discussion of results including future research directions
+    \end{itemize}
+    
+    \subsection{Weaknesses}
+    \begin{itemize}
+        \item The amount of novel content is small relative to the length of the paper
+        \item Still not sure of why they used $\alpha + 1$ and $\alpha - 1$ instead of $\alpha$ and $1 - \alpha$ in the "spreading" functions
+    \end{itemize}
+    
+    \subsection{Relation to Our Research}
+    Our proposed research was inspired by the model studied in this paper. It is similar in that builds on classical methods by modifying an existing model, but different because we propose to model two processes that are distinct yet related instead of a single process with multiple subgroups. 
+    \nocite{*}
+    \bibliographystyle{plain}
+    \bibliography{nima}
+\end{document}

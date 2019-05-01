@@ -1,0 +1,10 @@
+Use SEIR model - tons of work done with SEIR, appears to be the basis of state-of-the-art models
+    Need to establish that SEIR is appropriate for measles, use refs
+Use modified SIS model for the information diffusion process, or possibly some other one
+Consider social network as an overlay on population. Each node of the social network is a person who lives somewhere. For each "somewhere" we can estimate a population density. So for each person in the model, we decide whether they live in a city, town, small town, etc. randomly, using distribution of ppl living in cities vs towns etc. 
+
+
+
+comment{
+look at https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3767637/
+}
