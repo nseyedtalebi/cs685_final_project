@@ -1,3 +1,4 @@
+#Made by Joe Kaninberg
 import sys
 from random import randint
 
