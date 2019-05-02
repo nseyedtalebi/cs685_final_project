@@ -63,7 +63,7 @@ We propose a model that combine the information diffusion model [SIR]by adding n
 S: susceptible  E: exposed  I : infected  R: recovered\\
 We define transition between compartment by a threshold transition (TT) and has a value 0 or 1:
 \begin{align*}
-    \text{Threshold transition}(TT) &= \frac{\tau_{i}}{X}\\
+    %\text{Threshold transition}(TT) &= \frac{\tau_{i}}{X}\\
     \text{Threshold transition}(TT^{I}) &=%
     \begin{cases}
     1 &\text{if } \tau_{i}^{I} \geq X_{I}\\
@@ -83,7 +83,7 @@ where $\tau_{i}$ is the period of node i stayed in the compartment and X is the 
 Death rate from I- R  due to disease 0.2\%
 \subsection{Formulation}
 \begin{align*}
-    \text{Threshold transition}(TT) &= \frac{\tau_{i}}{X}\\
+    %\text{Threshold transition}(TT) &= \frac{\tau_{i}}{X}\\
     \text{Threshold transition from E-I}(TT^{I}) &=%
     \begin{cases}
     1 &\text{if } \tau_{i}^{I} \geq X_{I}\\
@@ -126,21 +126,21 @@ Our \ro values followed the pattern we expected. In our model, \ro is determined
 \begin{figure}[t]
     \centering
     \includegraphics[scale=0.5]{images/est_r0_er.png}
-    \caption{Estimated \ro values with an Erdos-Renyi contact network}
+    \caption{Estimated \ro values with an Erdos-Renyi contact network. Horizontal lines mark $R_0$ values in the range given for measles in the literature (12-18)}
     \label{fig:r0_er}
 \end{figure}
 
 \begin{figure}[t]
     \centering
     \includegraphics[scale=0.5]{images/est_ro_ba.png}
-    \caption{Estimated \ro values with a Barabasi-Albert contact network}
+    \caption{Estimated \ro values with a Barabasi-Albert contact network.}
     \label{fig:r0_ba}
 \end{figure}
 
 \begin{figure}[t]
     \centering
     \includegraphics[scale=0.5]{images/est_r0_ws.png}
-    \caption{Estimated \ro values with a Watts-Strogatz contact network}
+    \caption{Estimated \ro values with a Watts-Strogatz contact network.}
     \label{fig:r0_ws}
 \end{figure}
 
